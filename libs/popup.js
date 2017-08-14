@@ -259,6 +259,7 @@ function popup() {
 			}
 			html += '</tr>';
 		}
+		html = setProportionChecker(html, parameters); // 对于图片 长，宽 的调整，设置一个保持选项保持长宽比 WangFan 2017-08-14 14:47:12
 		html += '</table>';
 
 		//action buttons
@@ -270,6 +271,7 @@ function popup() {
 		html += '</div>';
 
 		document.getElementById("popup").innerHTML = html;
+        listenProportionChecker(document.getElementById("popup")); // 对于图片 长，宽 的调整，设置一个保持选项保持长宽比 WangFan 2017-08-14 14:47:12
 		document.getElementById("popup").style.display = "block";
 		if (parameters.length > 10)
 			document.getElementById("popup").style.overflowY = "scroll";
@@ -345,6 +347,59 @@ function popup() {
 		//call translation again to translate popup
 		HELP.help_translate(LANG);
 	};
+
+	/** 对于图片 长，宽 的调整，设置一个保持选项保持长宽比 */
+	function setProportionChecker(html, parameters){
+        var paramKeys = (parameters || []).map(function(elem){
+        	return elem.name;
+		});
+        // console.log('paramKeys', parameters);
+		if(paramKeys.length !== 2 || paramKeys.indexOf('width') < 0 || paramKeys.indexOf('height') < 0){
+            return html;
+		}
+        html += '<tr><th class="trn">Keep Proportion</th><td colspan="2"><input id="keep_proportion" type="checkbox" checked="checked" style="margin-left: 0" /></td></tr>';
+		return html;
+	}
+
+	function listenProportionChecker(dom){
+        var pop_data_width = document.querySelector("#pop_data_width");
+        var pop_data_height = document.querySelector("#pop_data_height");
+        var keep_proportion = document.querySelector('#keep_proportion');
+        var origin_width = parseInt(pop_data_width.getAttribute('placeholder'));
+        var origin_height = parseInt(pop_data_height.getAttribute('placeholder'));
+        if(isNaN(origin_width)){
+            return console.error('listenProportionChecker - wrong placeholder for #pop_data_width');
+		}
+        if(isNaN(origin_height)){
+            return console.error('listenProportionChecker - wrong placeholder for #pop_data_height');
+        }
+        document.querySelector("#pop_data_width").addEventListener('change', function(evt){
+            if(!keep_proportion.checked){
+                return;
+            }
+            var current_width = Math.abs(parseInt(evt.currentTarget.value));
+            if(isNaN(current_width)){
+				return console.error('listenProportionChecker - wrong current_width');
+			}
+			if(current_width < 1){
+				return console.error('current_width', current_width, 'cannot be smaller than 1');
+			}
+            pop_data_height.value = (current_width * (origin_height / origin_width)).toFixed(0);
+		})
+        document.querySelector("#pop_data_height").addEventListener('change', function(evt){
+            if(!keep_proportion.checked){
+            	return;
+			}
+            var current_height = Math.abs(parseInt(evt.currentTarget.value));
+            if(isNaN(current_height)){
+                return console.error('listenProportionChecker - wrong current_height');
+            }
+            if(current_height < 1){
+                return console.error('current_height', current_height, 'cannot be smaller than 1');
+            }
+            pop_data_width.value = (current_height * (origin_width / origin_height)).toFixed(0);
+        })
+	}
 	
 	//hide popup
 	this.hide = function () {
