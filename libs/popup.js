@@ -271,7 +271,7 @@ function popup() {
 		html += '</div>';
 
 		document.getElementById("popup").innerHTML = html;
-        listenProportionChecker(document.getElementById("popup")); // 对于图片 长，宽 的调整，设置一个保持选项保持长宽比 WangFan 2017-08-14 14:47:12
+        listenProportionChecker(parameters); // 对于图片 长，宽 的调整，设置一个保持选项保持长宽比 WangFan 2017-08-14 14:47:12
 		document.getElementById("popup").style.display = "block";
 		if (parameters.length > 10)
 			document.getElementById("popup").style.overflowY = "scroll";
@@ -353,7 +353,6 @@ function popup() {
         var paramKeys = (parameters || []).map(function(elem){
         	return elem.name;
 		});
-        // console.log('paramKeys', parameters);
 		if(paramKeys.indexOf('width') < 0 || paramKeys.indexOf('height') < 0){
             return html;
 		}
@@ -361,7 +360,13 @@ function popup() {
 		return html;
 	}
 
-	function listenProportionChecker(dom){
+	function listenProportionChecker(parameters){
+        var paramKeys = (parameters || []).map(function(elem){
+            return elem.name;
+        });
+        if(paramKeys.indexOf('width') < 0 || paramKeys.indexOf('height') < 0){
+            return;
+        }
         var pop_data_width = document.querySelector("#pop_data_width");
         var pop_data_height = document.querySelector("#pop_data_height");
         var keep_proportion = document.querySelector('#keep_proportion');
