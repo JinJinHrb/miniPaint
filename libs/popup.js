@@ -354,7 +354,7 @@ function popup() {
         	return elem.name;
 		});
         // console.log('paramKeys', parameters);
-		if(paramKeys.length !== 2 || paramKeys.indexOf('width') < 0 || paramKeys.indexOf('height') < 0){
+		if(paramKeys.indexOf('width') < 0 || paramKeys.indexOf('height') < 0){
             return html;
 		}
         html += '<tr><th class="trn">Keep Proportion</th><td colspan="2"><input id="keep_proportion" type="checkbox" checked="checked" style="margin-left: 0" /></td></tr>';
@@ -374,7 +374,7 @@ function popup() {
             return console.error('listenProportionChecker - wrong placeholder for #pop_data_height');
         }
         document.querySelector("#pop_data_width").addEventListener('change', function(evt){
-            if(!keep_proportion.checked){
+            if(!keep_proportion || !keep_proportion.checked){
                 return;
             }
             var current_width = Math.abs(parseInt(evt.currentTarget.value));
@@ -387,7 +387,7 @@ function popup() {
             pop_data_height.value = (current_width * (origin_height / origin_width)).toFixed(0);
 		})
         document.querySelector("#pop_data_height").addEventListener('change', function(evt){
-            if(!keep_proportion.checked){
+            if(!keep_proportion || !keep_proportion.checked){
             	return;
 			}
             var current_height = Math.abs(parseInt(evt.currentTarget.value));
